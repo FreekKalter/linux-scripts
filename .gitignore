@@ -1,6 +1,8 @@
 .*.sw[a-z]
 tags
+rand.txt
 
 #################
 
 uptime-stathat
+tarsnap-go
