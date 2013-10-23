@@ -6,3 +6,4 @@ rand.txt
 
 uptime-stathat
 tarsnap-go
+*.log
