@@ -1,0 +1,15 @@
+#!/bin/bash
+
+len=$1
+bar=""
+for i in $(seq 1 $len);do
+    bar+="#"
+    spaces=""
+    for j in $(seq 1 $(($len -$i)));do
+        spaces+=" "
+    done
+
+    echo -ne "[${bar}${spaces}]\r"
+    sleep 1
+done
+echo -ne "[${bar}${spaces}]\r\n"
