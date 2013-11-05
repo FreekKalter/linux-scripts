@@ -1,3 +1,4 @@
 #!/bin/sh
+# give screensaver-command all the dbus info it needs to work properly when calling it from cron/udev/etc..
 export DISPLAY=:0.0
 dbus-launch gnome-screensaver-command -l
