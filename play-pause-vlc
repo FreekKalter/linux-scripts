@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# get current workspace
 workspace=$(wmctrl -d |head -n1| awk -e '{
     if($2 == "*")
         print "0"
@@ -7,14 +8,17 @@ workspace=$(wmctrl -d |head -n1| awk -e '{
         print "1"
 }')
 
+# "play" workspace with a main vlc player
 if [ $workspace -eq 0 ]; then
     if [ -S /home/fkalter/vlc.sock ]; then
         echo "pause" | nc -U /home/fkalter/vlc.sock
     elif [ "$(pidof parole)" ]; then
         parole --play
     fi
-else
+# "work"  workspace with a parole player
+elif [ "$(pidof parole)" ]; then
     parole --play
 fi
 
+# update stats to stathat.com
 echo "play/pause" | nc localhost 6007
