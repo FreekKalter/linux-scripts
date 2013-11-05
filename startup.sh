@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo truecrypt --auto-mount=favorites --keyfiles=/mnt/secret/down_secret
-cp -H ~/scripts/gtk-bookmarks ~/.gtk-bookmarks
+cp -H ~/scripts/gtk-bookmarks ~/.config/gtk-3.0/bookmarks
 sudo start sabnzbd
 
 # Build Go from tip every 5 days
