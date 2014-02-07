@@ -54,7 +54,7 @@ sub wanted{
 
    if(-f $File::Find::name){
       $full_filename = file($File::Find::name);
-      if($File::Find::name =~ m/(?:jpg|png|gif|pdf|jpeg|html|nfo|doc)$/i){
+      if($File::Find::name =~ m/(?:jpg|png|gif|pdf|jpeg|html|htm|nfo|doc)$/i){
 
          opendir(my $dh, $File::Find::dir) || die "Can't opendir $File::Find::dir: $!";
          my @files = grep {!/^\.\.?$/} readdir($dh);

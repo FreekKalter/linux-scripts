@@ -2,6 +2,8 @@
 sudo truecrypt --auto-mount=favorites --keyfiles=/mnt/secret/down_secret
 cp -H ~/scripts/gtk-bookmarks ~/.config/gtk-3.0/bookmarks
 sudo start sabnzbd
+ssh-add
+sudo service docker start
 
 # Build Go from tip every 5 days
 # (not a cron job because it needs an attached terminal)
