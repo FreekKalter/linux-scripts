@@ -7,22 +7,28 @@ use Carp;
 use IPC::Open3 qw( open3 );
 use Path::Tiny;
 
-my $sock        = "/home/fkalter/vlc-random.sock";
-my $log         = "/home/fkalter/log.txt";
-my $dir         = "/media/truecrypt2/down/";
+my $sock                = "/home/fkalter/vlc-random.sock";
+my $log                 = "/home/fkalter/log.txt";
+my $standard_dir        = "/media/truecrypt2/down/";
+my $current_playing_dir = path("/home/fkalter/current_vlc_random");
+my $dir;
 
 my ( $read, $write, $pid );
 
-if ( -e $sock )
-{   # if vlc does not respond on current sock-file, delete it and create new one
+if ( -e $sock ) {
+    # if vlc does not respond on current sock-file, delete it and fork new vlc with own new socketfile
     if ( system("echo 'logout' | nc -U $sock") ) {
         unlink $sock;
         &fork_vlc();
     }
+    $dir = path($ARGV[0] || $current_playing_dir->slurp);
 }
 else {
     &fork_vlc();
 }
+
+say $dir;
+$current_playing_dir->spew($dir);
 
 opendir( my $dh, $dir );
 my @files = grep { !/^\.{1,2}/x } readdir($dh);
@@ -30,10 +36,10 @@ open( my $lh, ">>", $log ) or croak "Could not open $log for writing: $!";
 
 my $rand = int(rand(scalar @files));
 
-print $lh $files[$rand], "\n";
+my $to_add = $dir->child($files[$rand]);
+print $lh $to_add, "\n";
 close $lh;
 
-my $to_add = $dir . $files[$rand];
 $pid = open3( $write, $read, $read, qq( echo "add $to_add" | nc -U $sock ) );
 waitpid( $pid, 0 );
 
@@ -47,10 +53,10 @@ if ( $status =~ /menu select/ ) {
 }
 close($lh);
 
-say $rand;
-say scalar @files;
+say "$rand/".scalar @files;
 
 sub fork_vlc {
+    $dir = path($ARGV[0] || $standard_dir);
     die "could not fork\n" unless defined( $pid = fork );
     if ( !$pid ) {
         exec "vlc --extraintf oldrc --rc-unix $sock > /dev/null 2>&1";
