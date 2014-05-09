@@ -3,7 +3,7 @@
 #set -o pipefail
 
 echo "[-] stopping sabnzd"
-stop sabnzbd && /home/fkalter/scripts/sleep-progress 20
+stop sabnzbd
 echo "[+] sabnzd stopped"
 
 cd /tmp/
