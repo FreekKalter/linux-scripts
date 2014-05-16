@@ -61,6 +61,11 @@ sub fork_vlc {
     if ( !$pid ) {
         exec "vlc --extraintf oldrc --rc-unix $sock > /dev/null 2>&1";
     }
-    sleep 2;
+    # while sock file does not existt
+    # or while "echo status | nc -U $sockfile " does not return anything
+    while( not -e $sock ){
+       say "$sock not yet created";
+       sleep(1);
+    }
     return;
 }
