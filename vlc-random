@@ -47,8 +47,7 @@ my $status = do { local $/ = undef; <$read> };
 if ( $status =~ /menu select/ ) {
     $pid = open3( $write, $read, $read, qq( echo "pause" | nc -U $sock ) );
     waitpid( $pid, 0 );
-    $pid =
-      open3( $write, $read, $read, qq( echo "add $to_add" | nc -U $sock ) );
+    $pid = open3( $write, $read, $read, qq( echo "add $to_add" | nc -U $sock ) );
     waitpid( $pid, 0 );
 }
 close($lh);
@@ -61,11 +60,16 @@ sub fork_vlc {
     if ( !$pid ) {
         exec "vlc --extraintf oldrc --rc-unix $sock > /dev/null 2>&1";
     }
-    # while sock file does not existt
-    # or while "echo status | nc -U $sockfile " does not return anything
+
+    # wait for vlc to completely startup before moving on
+    # asume vlc is started when it has created the socket file
     while( not -e $sock ){
-       say "$sock not yet created";
+        say "waiting for socket to be created";
        sleep(1);
+    }
+    while(system("echo 'logout'| nc -U $sock")){
+        say "waiting for vlc to completely start";
+       sleep(0.5);
     }
     return;
 }
