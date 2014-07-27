@@ -1,17 +1,30 @@
 #!/bin/bash
+echo "[-] starting docker"
+sudo service docker start
+echo "[+] docker started"
+
+echo "[-] mounting truecrypt volumes"
 sudo truecrypt --auto-mount=favorites --keyfiles=/mnt/secret/down_secret
 cp -H ~/scripts/gtk-bookmarks ~/.config/gtk-3.0/bookmarks
+echo "[+] mounting done"
+
+echo "[-] starting sabnzb"
 sudo start sabnzbd
+echo "[-] sabnzb started"
+
 ssh-add
-sudo service docker start
 
 # Build Go from tip every 5 days
 # (not a cron job because it needs an attached terminal)
 cd ~/go/src
-if [ $(( `date +%-d` % 5 )) -eq 0 ]; then
-    hg sync
+# only on wednesday (day 3 of the week)
+if [ `date +%-u` -eq 3 ]; then
+    echo "[-] building go from source"
+    hg pull
+    hg update default
     ./all.bash
+    go get -u github.com/laher/goxc
     goxc -t
-else
-    echo "Building go not needed today, `date +%-d`"
+    go get -u code.google.com/p/go.tools/cmd/godoc
+    echo "[+] done building"
 fi
