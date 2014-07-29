@@ -1,20 +1,21 @@
 #!/bin/bash
-echo "[-] starting docker"
-sudo service docker start
-echo "[+] docker started"
-
 echo "[-] mounting truecrypt volumes"
 sudo truecrypt --auto-mount=favorites --keyfiles=/mnt/secret/down_secret
 cp -H ~/scripts/gtk-bookmarks ~/.config/gtk-3.0/bookmarks
 echo "[+] mounting done"
 
+echo "[-] starting docker"
+sudo service docker start
+echo "[+] docker started"
+
+
 echo "[-] starting sabnzb"
 sudo start sabnzbd
-echo "[-] sabnzb started"
+echo "[+] sabnzb started"
 
 ssh-add
 
-# Build Go from tip every 5 days
+# Build Go from tip every week
 # (not a cron job because it needs an attached terminal)
 cd ~/go/src
 # only on wednesday (day 3 of the week)
