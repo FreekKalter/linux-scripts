@@ -7,10 +7,10 @@ use Carp;
 use IPC::Open3 qw( open3 );
 use Path::Tiny;
 
-my $sock                = "/home/fkalter/vlc-random.sock";
+my $sock                = "/home/fkalter/.vlc-random.sock";
 my $log                 = "/home/fkalter/log.txt";
 my $standard_dir        = "/media/truecrypt4/down/";
-my $current_playing_dir = path("/home/fkalter/current_vlc_random");
+my $current_playing_dir = path("/home/fkalter/.current_vlc_random");
 my $dir;
 
 my ( $read, $write, $pid );
