@@ -1,6 +1,7 @@
 .*.sw[a-z]
 tags
 rand.txt
+test/*
 
 #################
 
