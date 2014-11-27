@@ -28,8 +28,8 @@ if [ `date +%-u` -eq 3 ]; then
     hg pull
     hg update default
     ./all.bash
+    go get -u code.google.com/p/go.tools/cmd/...
     go get -u github.com/laher/goxc
     goxc -t
-    go get -u code.google.com/p/go.tools/cmd/godoc
     echo "[+] done building"
 fi
