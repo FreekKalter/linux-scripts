@@ -15,6 +15,10 @@ echo "[+] sabnzb started"
 
 ssh-add
 
+echo "[-] starting dropbox"
+dropbox start
+echo "[+] dropbox started"
+
 # Build Go from tip every week
 # (not a cron job because it needs an attached terminal)
 cd ~/go/src
