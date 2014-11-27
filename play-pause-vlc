@@ -14,6 +14,10 @@ if [ $workspace -eq 0 ]; then
         echo "pause" | nc -U /home/fkalter/vlc.sock
     elif [ "$(pidof parole)" ]; then
         parole --play
+    elif [ "$(pidof smplayer)" ]; then
+        current_window=$(xdotool getwindowfocus getwindowname)
+        smplayer -send-action play_or_pause
+        wmctrl -a $current_window
     fi
 # "work"  workspace with a parole player
 elif [ "$(pidof parole)" ]; then
