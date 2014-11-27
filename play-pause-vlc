@@ -15,9 +15,9 @@ if [ $workspace -eq 0 ]; then
     elif [ "$(pidof parole)" ]; then
         parole --play
     elif [ "$(pidof smplayer)" ]; then
-        current_window=$(xdotool getwindowfocus getwindowname)
+        window_name=$(xprop -id $(xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2) _NET_WM_NAME | cut -d = -f 2 | sed 's/^ *//' | sed 's/^"//' | sed 's/"$//')
         smplayer -send-action play_or_pause
-        wmctrl -a $current_window
+        wmctrl -a $window_name
     fi
 # "work"  workspace with a parole player
 elif [ "$(pidof parole)" ]; then
