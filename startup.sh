@@ -22,12 +22,11 @@ echo "[+] dropbox started"
 
 # Build Go from tip every week
 # (not a cron job because it needs an attached terminal)
-cd ~/go/src
 # only on wednesday (day 3 of the week)
 if [ `date +%-u` -eq 3 ]; then
     echo "[-] building go from source"
-    hg pull
-    hg update default
+    cd ~/go/src
+    git pull
     ./all.bash
     go get -u code.google.com/p/go.tools/cmd/...
     go get -u github.com/laher/goxc
