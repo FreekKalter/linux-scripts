@@ -14,7 +14,7 @@ sudo start sabnzbd
 echo "[+] sabnzb started"
 
 ssh-add
-ln -s $SSH_AUTH_SOCK /home/fkalter/.ssh_auth_sock
+ln -fs $SSH_AUTH_SOCK /home/fkalter/.ssh_auth_sock
 
 echo "[-] starting dropbox"
 dropbox start
