@@ -1,33 +1,45 @@
 #!/usr/bin/env python
+from __future__ import print_function, division
 from path import Path
 import argparse
 import re
 import sys
 
 parser = argparse.ArgumentParser(description="find missing files in a series of numbered files")
-parser.add_argument('--path', default='.', help='directory to look for the serie')
+parser.add_argument('path', default='.', help='directory to look for the serie')
 parser.add_argument('--file_pattern', help='file pattern to match files againts ex: *.txt, help_*')
 parser.add_argument('--include_dirs', action='store_true', help='include directories in files to match')
+parser.add_argument('--threshold', type=float, default=0.9, help='default 0.9, is less the 90% of files are missing from serie abort early')
 args = parser.parse_args()
 
 d = Path(args.path)
 file_list = d.files(args.file_pattern)
 if args.include_dirs:
-	file_list += d.dirs()
+    file_list += d.dirs()
 int_regex = re.compile('\d+')
-#serie = [int(int_regex.search(f.name).group(0)) for f in file_list if int_regex.search(f.name)]
-serie =[]
+serie = set()
 for f in file_list:
     m = int_regex.search(f.name)
     if m:
-        serie.append(int(m.group(0)))
+        try:
+            number = int(m.group(0))
+        except:
+            print('cant convert to int')
+            sys.exit(1)
+        if number in serie:
+            print('{} double'.format(f.name))
+        else:
+            serie.add(number)
 
-print  len(serie), max(serie)-min(serie),  len(serie)   *1.0 / (max(serie)-min(serie))
-sys.exit(1)
+threshold = len(serie) / (max(serie)-min(serie)+1)
+if threshold < args.threshold:
+    print('{:.2f} does not meet specified threshold ({})'.format(threshold, args.threshold))
+    sys.exit(0)
+
 try:
-	not_in_serie = [i for i in xrange(min(serie),max(serie)) if i not in serie]
-except ValueError:
-	sys.exit(0)
+    not_in_serie = [i for i in xrange(min(serie),max(serie)) if i not in serie]
+except ValueError: # no matches in serie
+    sys.exit(0)
 
 for i in not_in_serie:
-	print '{} not in serie'.format(i)
+    print('{} not in serie'.format(i))
