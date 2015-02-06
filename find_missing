@@ -8,8 +8,11 @@ import sys
 parser = argparse.ArgumentParser(description="find missing files in a series of numbered files")
 parser.add_argument('path', default='.', nargs='?', help='directory to look for the serie')
 parser.add_argument('--file_pattern', help='file pattern to match files againts ex: *.txt, help_*')
-parser.add_argument('--include_dirs', action='store_true', help='include directories in files to match')
-parser.add_argument('--threshold', type=float, default=0.9, help='default 0.9, is less the 90% of files are missing from serie abort early')
+parser.add_argument('--include_dirs', action='store_true',
+                    help='include directories in files to match')
+parser.add_argument('--threshold', type=float, default=0.9,
+                    help='default 0.9, is less the 90% of files are missing from serie abort early'
+                    )
 args = parser.parse_args()
 
 d = Path(args.path)
@@ -31,14 +34,14 @@ for f in file_list:
         else:
             serie.add(number)
 
-threshold = len(serie) / (max(serie)-min(serie)+1)
+threshold = len(serie) / (max(serie) - min(serie) + 1)
 if threshold < args.threshold:
     print('{:.2f} does not meet specified threshold ({})'.format(threshold, args.threshold))
     sys.exit(0)
 
 try:
-    not_in_serie = [i for i in xrange(min(serie),max(serie)) if i not in serie]
-except ValueError: # no matches in serie
+    not_in_serie = [i for i in xrange(min(serie), max(serie)) if i not in serie]
+except ValueError:  # no matches in serie
     sys.exit(0)
 
 for i in not_in_serie:
