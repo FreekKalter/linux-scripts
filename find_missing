@@ -6,7 +6,7 @@ import re
 import sys
 
 parser = argparse.ArgumentParser(description="find missing files in a series of numbered files")
-parser.add_argument('path', default='.', help='directory to look for the serie')
+parser.add_argument('path', default='.', nargs='?', help='directory to look for the serie')
 parser.add_argument('--file_pattern', help='file pattern to match files againts ex: *.txt, help_*')
 parser.add_argument('--include_dirs', action='store_true', help='include directories in files to match')
 parser.add_argument('--threshold', type=float, default=0.9, help='default 0.9, is less the 90% of files are missing from serie abort early')
