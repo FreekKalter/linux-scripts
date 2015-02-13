@@ -24,12 +24,5 @@ echo "[+] dropbox started"
 # (not a cron job because it needs an attached terminal)
 # only on wednesday (day 3 of the week)
 if [ `date +%-u` -eq 3 ]; then
-    echo "[-] building go from source"
-    cd ~/go/src
-    git pull
-    ./all.bash
-    go get -u code.google.com/p/go.tools/cmd/...
-    go get -u github.com/laher/goxc
-    goxc -t
-    echo "[+] done building"
+    build_go.sh
 fi
