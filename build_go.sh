@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "[-] building go from source"
 cd ~/go/src
 git pull
