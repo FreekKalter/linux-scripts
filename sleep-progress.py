@@ -5,6 +5,7 @@ import sys
 import math
 import re
 
+width = 50.0
 usage = 'Usage: {} TIME\n\
     Where TIME can be expressed in a couple of ways\n\
     10      -> 10 seconds, just a number will be interpeted as seconds\n\
@@ -12,37 +13,46 @@ usage = 'Usage: {} TIME\n\
     1:10    -> for 1 hour and 10 minutes\n\
     1:10:5  -> for 1 hour, 10 minutes and 5 seconds'.format(sys.argv[0])
 
-if len(sys.argv) > 2:
-    print('To many arguments')
+
+def exitWith(message):
+    print(message)
     print(usage)
     sys.exit(1)
 
-width = 50.0
+if len(sys.argv) > 2:
+    exitWith('To many arguments')
+
+patterns = dict(mhs='^\d+:\d+:\d+$', mh='^\d+:\d+$', letter='^(\d)+([mhs])$')
 try:
     sleep = int(sys.argv[1])
 except ValueError:
-        timestr = sys.argv[1]
-        if re.match('^\d+:\d+:\d+$', timestr):
-            hours, minutes, seconds = timestr.split(':')
-            sleep = 3600 * int(hours) + 60 * int(minutes) + int(seconds)
-        elif re.match('^\d+:\d+$', timestr):
-            hours, minutes = timestr.split(':')
-            sleep = 3600 * int(hours) + 60 * int(minutes)
-        elif re.match('^\d+[mhs]$', timestr, re.IGNORECASE):
-            m = re.match('(\d+)([mhs])', timestr, re.IGNORECASE)
-            multiplydict = dict(s=1, m=60, h=3600)
-            sleep = int(m.group(1)) * multiplydict[m.group(2).lower()]
-        else:
-            print('Could not parse given time')
-            print(usage)
-            sys.exit(1)
+        try:
+            timestr = sys.argv[1]
+            for name, pat in patterns.items():
+                m = re.match(pat, timestr, re.IGNORECASE)
+                if m:
+                    if name == 'mhs':
+                        hours, minutes, seconds = timestr.split(':')
+                        sleep = 3600 * int(hours) + 60 * int(minutes) + int(seconds)
+                        break
+                    elif name == 'mh':
+                        hours, minutes = timestr.split(':')
+                        sleep = 3600 * int(hours) + 60 * int(minutes)
+                        break
+                    elif name == 'letter':
+                        multiplydict = dict(s=1, m=60, h=3600)
+                        sleep = int(m.group(1)) * multiplydict[m.group(2).lower()]
+                        break
+            else:
+                exitWith('Could not parse given time')
+        except Exception:
+            exitWith('Could not parse given time')
 except IndexError:
-    print('To few argumenst')
-    print(usage)
-    sys.exit(1)
+    exitWith('To few argumenst')
 
 for i in xrange(sleep):
     nrstars = int(width / sleep * i)
     print('[{}{}]'.format('*' * nrstars, ' ' * int(math.ceil(width - nrstars))), end='\r')
     sys.stdout.flush()
     time.sleep(1)
+print('[{}]'.format('*' * int(width)))
