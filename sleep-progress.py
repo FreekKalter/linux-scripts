@@ -10,7 +10,7 @@ usage = 'Usage: {} TIME\n\
     10      -> 10 seconds, just a number will be interpeted as seconds\n\
     10[MHS] -> for 10 minutes, hours or seconds\n\
     1:10    -> for 1 hour and 10 minutes\n\
-    1:10:5  -> for 1 hour, 10 minutes and 5 seconds'
+    1:10:5  -> for 1 hour, 10 minutes and 5 seconds'.format(sys.argv[0])
 
 if len(sys.argv) > 2:
     print('To many arguments')
@@ -21,21 +21,21 @@ width = 50.0
 try:
     sleep = int(sys.argv[1])
 except ValueError:
-    try:
         timestr = sys.argv[1]
-        if re.match('\d+:\d+:\d+', timestr):
+        if re.match('^\d+:\d+:\d+$', timestr):
             hours, minutes, seconds = timestr.split(':')
-            sleep = 3600*int(hours)+60*int(minutes)+int(seconds)
-        elif re.match('\d+:\d+', timestr):
+            sleep = 3600 * int(hours) + 60 * int(minutes) + int(seconds)
+        elif re.match('^\d+:\d+$', timestr):
             hours, minutes = timestr.split(':')
-            sleep = 3600*int(hours)+60*int(minutes)
-        elif re.match('\d+[mhs]', timestr, re.IGNORECASE):
+            sleep = 3600 * int(hours) + 60 * int(minutes)
+        elif re.match('^\d+[mhs]$', timestr, re.IGNORECASE):
             m = re.match('(\d+)([mhs])', timestr, re.IGNORECASE)
             multiplydict = dict(s=1, m=60, h=3600)
-            sleep = int(m.group(1)) * multiplydict[m.group(2)]
-    except:
-        print('Could not parse given time')
-        print(usage)
+            sleep = int(m.group(1)) * multiplydict[m.group(2).lower()]
+        else:
+            print('Could not parse given time')
+            print(usage)
+            sys.exit(1)
 except IndexError:
     print('To few argumenst')
     print(usage)
