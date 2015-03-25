@@ -23,14 +23,15 @@ def exitWith(message):
 def main():
     if len(sys.argv) > 2:
         exitWith('To many arguments')
-
-    patterns = dict(mhs='^\d+:\d+:\d+$', mh='^\d+:\d+$', letter='^(\d)+([mhs])$')
     try:
         sleep = int(sys.argv[1])
     except ValueError:
             try:
                 timestr = sys.argv[1]
-                for name, pat in patterns.items():
+                patterns = [('letter', '^(\d)+([mhs])$'),
+                            ('mh', '^\d+:\d+$'),
+                            ('mhs', '^\d+:\d+:\d+$')]
+                for name, pat in patterns:
                     m = re.match(pat, timestr, re.IGNORECASE)
                     if m:
                         if name == 'mhs':
@@ -45,9 +46,9 @@ def main():
                             multiplydict = dict(s=1, m=60, h=3600)
                             sleep = int(m.group(1)) * multiplydict[m.group(2).lower()]
                             break
-                else:
+                else:  # if no pattern matched
                     exitWith('Could not parse given time')
-            except Exception:
+            except Exception:  # if something realy unexpected happend during parsing
                 exitWith('Could not parse given time')
     except IndexError:
         exitWith('To few argumenst')
