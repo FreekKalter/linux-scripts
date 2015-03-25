@@ -23,6 +23,9 @@ def exitWith(message):
 def main():
     if len(sys.argv) > 2:
         exitWith('To many arguments')
+    if sys.argv[1] == '-h' or sys.argv[1] == '--help':
+        print(usage)
+        sys.exit(0)
     try:
         sleep = int(sys.argv[1])
     except ValueError:
