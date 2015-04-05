@@ -56,12 +56,13 @@ def main():
     except IndexError:
         exitWith('To few argumenst')
 
-    sleep *= 5
+    updatesPerSecond = 5
+    sleep *= updatesPerSecond
     for i in xrange(sleep):
         nrstars = int(width / sleep * i)
         print('[{}{}]'.format('*' * nrstars, ' ' * int(math.ceil(width - nrstars))), end='\r')
         sys.stdout.flush()
-        time.sleep(0.2)
+        time.sleep(1.0 / updatesPerSecond)
     print('[{}]'.format('*' * int(width)))
 
 
