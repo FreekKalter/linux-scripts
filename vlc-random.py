@@ -2,10 +2,10 @@
 from __future__ import print_function
 import subprocess
 import os
-import sys
 import re
 import random
 from path import path
+import argparse
 
 standard_dir        = '/media/truecrypt4/down'
 sock                = '/home/fkalter/.vlc-random.sock'
@@ -17,6 +17,15 @@ with open(current_dir_file, 'r') as f:
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Play a random file in a given directory')
+    parser.add_argument('directory', nargs='?', help='the directory to pick a file from')
+    parser.add_argument('-d', '--delete', action='store_true',
+                        help='delete the last picked file before picking a new one')
+    args = parser.parse_args()
+
+    if args.delete:
+        with open('/home/fkalter/log.txt', 'r') as f:
+            subprocess.call(['trash-put', reversed(f.readlines()).next().strip()])
     devnull = open(os.devnull, 'w')
     vlc_running = False
     try:
@@ -30,8 +39,8 @@ def main():
             pass
         vlc_running = False
 
-    if len(sys.argv) > 1:
-        dir = sys.argv[1]
+    if args.directory:
+        dir = args.directory
     else:
         if vlc_running:
             dir = current_dir
