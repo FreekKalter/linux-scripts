@@ -31,7 +31,7 @@ def main():
     except ValueError:
             try:
                 timestr = sys.argv[1]
-                patterns = [('letter', '^(\d)+([mhs])$'),
+                patterns = [('letter', '^(\d+)([mhs])$'),
                             ('mh', '^\d+:\d+$'),
                             ('mhs', '^\d+:\d+:\d+$')]
                 for name, pat in patterns:
