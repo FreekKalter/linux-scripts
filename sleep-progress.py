@@ -29,30 +29,30 @@ def main():
     try:
         sleep = int(sys.argv[1])
     except ValueError:
-            try:
-                timestr = sys.argv[1]
-                patterns = [('letter', '^(\d+)([mhs])$'),
-                            ('mh', '^\d+:\d+$'),
-                            ('mhs', '^\d+:\d+:\d+$')]
-                for name, pat in patterns:
-                    m = re.match(pat, timestr, re.IGNORECASE)
-                    if m:
-                        if name == 'mhs':
-                            hours, minutes, seconds = timestr.split(':')
-                            sleep = 3600 * int(hours) + 60 * int(minutes) + int(seconds)
-                            break
-                        elif name == 'mh':
-                            hours, minutes = timestr.split(':')
-                            sleep = 3600 * int(hours) + 60 * int(minutes)
-                            break
-                        elif name == 'letter':
-                            multiplydict = dict(s=1, m=60, h=3600)
-                            sleep = int(m.group(1)) * multiplydict[m.group(2).lower()]
-                            break
-                else:  # if no pattern matched
-                    exitWith('Could not parse given time')
-            except Exception:  # if something realy unexpected happend during parsing
+        try:
+            timestr = sys.argv[1]
+            patterns = [('letter', '^(\d+)([mhs])$'),
+                        ('mh', '^\d+:\d+$'),
+                        ('mhs', '^\d+:\d+:\d+$')]
+            for name, pat in patterns:
+                m = re.match(pat, timestr, re.IGNORECASE)
+                if m:
+                    if name == 'mhs':
+                        hours, minutes, seconds = timestr.split(':')
+                        sleep = 3600 * int(hours) + 60 * int(minutes) + int(seconds)
+                        break
+                    elif name == 'mh':
+                        hours, minutes = timestr.split(':')
+                        sleep = 3600 * int(hours) + 60 * int(minutes)
+                        break
+                    elif name == 'letter':
+                        multiplydict = dict(s=1, m=60, h=3600)
+                        sleep = int(m.group(1)) * multiplydict[m.group(2).lower()]
+                        break
+            else:  # if no pattern matched
                 exitWith('Could not parse given time')
+        except Exception:  # if something realy unexpected happend during parsing
+            exitWith('Could not parse given time')
     except IndexError:
         exitWith('To few argumenst')
 
