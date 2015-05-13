@@ -19,10 +19,3 @@ ln -fs $SSH_AUTH_SOCK /home/fkalter/.ssh_auth_sock
 echo "[-] starting dropbox"
 dropbox start
 echo "[+] dropbox started"
-
-# Build Go from tip every week
-# (not a cron job because it needs an attached terminal)
-# only on wednesday (day 3 of the week)
-if [ `date +%-u` -eq 3 ]; then
-    build_go.sh
-fi
