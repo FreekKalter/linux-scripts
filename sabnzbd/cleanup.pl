@@ -54,7 +54,7 @@ sub wanted{
 
    if(-f $File::Find::name){
       $full_filename = file($File::Find::name);
-      if($File::Find::name =~ m/(?:jpg|png|gif|pdf|jpeg|html|htm|nfo|doc)$/i){
+      if($File::Find::name =~ m/(?:jpg|png|gif|pdf|jpeg|html|htm|nfo|doc|docx|nzb)$/i){
 
          opendir(my $dh, $File::Find::dir) || die "Can't opendir $File::Find::dir: $!";
          my @files = grep {!/^\.\.?$/} readdir($dh);
@@ -65,6 +65,8 @@ sub wanted{
              $max = $size if $size>$max;
          }
 
+         # The next check will keep a directory with only small files.
+         # ex: a folder with just pdfs will be kept, a single pdf will be deleted
          if( scalar(@files) > 1 && $max > 50*(1024*1024) ){
             my $s =  stat($File::Find::name)->size / (1024*1024);
             $size += $s;
