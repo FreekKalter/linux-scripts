@@ -2,18 +2,40 @@
 from __future__ import print_function, division
 from path import Path
 import argparse
+import textwrap
 import re
 import sys
 
-parser = argparse.ArgumentParser(description="find missing files in a series of numbered files")
+
+class ArgumentDefaultAndRawDescription(argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter):
+    pass
+
+parser = argparse.ArgumentParser(prog='find_missing', formatter_class=ArgumentDefaultAndRawDescription,
+                                 description=textwrap.dedent('''
+        Find missing files in a series of numbered files.\n
+        It grabs the first number from every file specified, and checks if any numbers are missing from a series.
+        For example, a directory with the files: file_1.txt, file_2.txt and file_4.txt
+        Running %(prog)s in this directory will print '3', since this number is missing in the serie 1-4
+        By default it will consider the serie to run from the lowest found number to the hihgest, but this can
+        be manually specified with the --range option.'''))
+
 parser.add_argument('path', default='.', nargs='?', help='directory to look for the serie')
+# TODO: specify (with a regex with capture group?) wich part of the filename to interped as the number of the serie
 parser.add_argument('--file_pattern', help='file pattern to match files againts ex: *.txt, help_*')
 parser.add_argument('--include_dirs', action='store_true',
                     help='include directories in files to match')
-parser.add_argument('--threshold', type=float, default=0.9,
-                    help='default 0.9, is less the 90% of files are missing from serie abort early'
-                    )
+parser.add_argument('--threshold', type=float, default=0.1,
+                    help='abort early if a the specified threshold ratio of files is missing (might indicate error)')
+parser.add_argument('--range', help='range to check for, ex: 1-15, 1 to 15 inclusive')
+
 args = parser.parse_args()
+if args.range is not None:
+    rangeMin, rangeMax = args.range.split('-')
+    try:
+        rangeMin = int(rangeMin)
+        rangeMax = int(rangeMax)
+    except ValueError:
+        sys.exit('range should be valid integers seperated by a dash, ex: 1-5')
 
 d = Path(args.path)
 file_list = d.files(args.file_pattern)
@@ -24,25 +46,22 @@ serie = set()
 for f in file_list:
     m = int_regex.search(f.name)
     if m:
-        try:
-            number = int(m.group(0))
-        except:
-            print('cant convert to int')
-            sys.exit(1)
+        number = int(m.group(0))
         if number in serie:
             print('{} double'.format(f.name))
         else:
             serie.add(number)
 
-threshold = len(serie) / (max(serie) - min(serie) + 1)
-if threshold < args.threshold:
-    print('{:.2f} does not meet specified threshold ({})'.format(threshold, args.threshold))
+ratioFound = (max(serie) - min(serie) + 1) / len(serie)
+ratioMissing = 1.0 - ratioFound
+if ratioMissing > args.threshold:
+    print('{:.2f} exceeds specified threshold ratio ({:.2f})'.format(ratioMissing, args.threshold))
     sys.exit(0)
 
-try:
+if args.range:
+    not_in_serie = [i for i in xrange(rangeMin, rangeMax + 1) if i not in serie]
+else:
     not_in_serie = [i for i in xrange(min(serie), max(serie)) if i not in serie]
-except ValueError:  # no matches in serie
-    sys.exit(0)
 
 for i in not_in_serie:
     print('{} not in serie'.format(i))
