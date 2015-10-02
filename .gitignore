@@ -9,3 +9,6 @@ test/*
 uptime-stathat
 tarsnap-go
 *.log
+
+# not my own code
+mmcat
