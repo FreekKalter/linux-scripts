@@ -54,7 +54,11 @@ sub wanted{
 
    if(-f $File::Find::name){
       $full_filename = file($File::Find::name);
-      if($File::Find::name =~ m/(?:jpg|png|gif|pdf|jpeg|html|htm|nfo|doc|docx|nzb)$/i){
+      #TODO: remove files without extension ??
+      # Always remove these, alsways useless junk
+      if($File::Find::name =~ m/(?:html|htm|nfo|doc|docx|nzb|srr|db|url|par|txt)$/i){
+          deleteAndLog($full_filename);
+      }elsif($File::Find::name =~ m/(?:jpg|png|gif|pdf|jpeg)$/i){ # check if it is useful
 
          opendir(my $dh, $File::Find::dir) || die "Can't opendir $File::Find::dir: $!";
          my @files = grep {!/^\.\.?$/} readdir($dh);
@@ -68,18 +72,13 @@ sub wanted{
          # The next check will keep a directory with only small files.
          # ex: a folder with just pdfs will be kept, a single pdf will be deleted
          if( scalar(@files) > 1 && $max > 50*(1024*1024) ){
-            my $s =  stat($File::Find::name)->size / (1024*1024);
-            $size += $s;
-            $count++;
-
-            printf ("%-170.170s\t%.2f\tMB\n", $full_filename, $s);
-            push @to_delete , $full_filename;
+            deleteAndLog($full_filename);
          }
 
       }elsif($full_filename =~ /(.+)\.(\w{3})$/i){
-         my $file_name  = "\Q$1"; #this contains whole paht, so to avoid later problems with pattern matching metaqoute this data with \Q
+         my $file_name  = "\Q$1"; #this contains whole path, so to avoid later problems with pattern matching metaqoute this data with \Q
          my $extension  = "\Q$2";
-         my $file_name_old  = "$1"; #this contains whole paht, so to avoid later problems with pattern matching metaqoute this data with \Q
+         my $file_name_old  = "$1"; #this contains whole path, so to avoid later problems with pattern matching metaqoute this data with \Q
          my $extension_old  = "$2";
 
          opendir(my $dh, $File::Find::dir) || die "Can't opendir $File::Find::dir: $!";
@@ -90,12 +89,7 @@ sub wanted{
          my ($sample) = grep{ /$file_name \. 1 \. $extension/x || /$file_name . sample . $extension/x } @files;
          #check for files in this dir with a 1 at the end of the file name (maria.wmv maria.1.wmv)
          if($sample){
-            my $s =  stat("$sample")->size / (1024*1024);
-            $size += $s;
-            $count++;
-
-            printf ("%-170.170s\t%.2f\tMB\tSAMPLE\n", $sample, $s);
-            push @to_delete , $sample;
+             deleteAndLog($sample);
          }
 
       }
@@ -110,4 +104,14 @@ sub wanted{
       }
    }
 
+}
+
+sub deleteAndLog{
+    my $path = shift;
+    my $s =  stat($path)->size / (1024*1024);
+    $size += $s;
+    $count++;
+
+    printf ("%-170.170s\t%.2f\tMB\n", $path, $s);
+    push @to_delete , $path;
 }
