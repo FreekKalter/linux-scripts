@@ -1,0 +1,6 @@
+#!/bin/bash
+for f in *.part01.rar; do
+    echo "[-] unpacking $f"
+    unrar e "$f" $1
+    echo "[+] done unpacking $f"
+done
