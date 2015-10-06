@@ -56,7 +56,7 @@ sub wanted{
       $full_filename = file($File::Find::name);
       #TODO: remove files without extension ??
       # Always remove these, alsways useless junk
-      if($File::Find::name =~ m/(?:html|htm|nfo|doc|docx|nzb|srr|db|url|par|txt)$/i){
+      if($File::Find::name =~ m/(?:html|htm|nfo|doc|docx|nzb|srr|db|url|par|txt|package_version)$/i){
           deleteAndLog($full_filename);
       }elsif($File::Find::name =~ m/(?:jpg|png|gif|pdf|jpeg)$/i){ # check if it is useful
 
