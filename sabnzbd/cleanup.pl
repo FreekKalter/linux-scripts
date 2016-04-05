@@ -81,8 +81,6 @@ sub wanted{
       }elsif($full_filename =~ /(.+)\.(\w{3})$/i){
          my $file_name  = "\Q$1"; #this contains whole path, so to avoid later problems with pattern matching metaqoute this data with \Q
          my $extension  = "\Q$2";
-         my $file_name_old  = "$1"; #this contains whole path, so to avoid later problems with pattern matching metaqoute this data with \Q
-         my $extension_old  = "$2";
 
          opendir(my $dh, $File::Find::dir) || die "Can't opendir $File::Find::dir: $!";
          my @files = map  { file($File::Find::dir , $_) }
@@ -100,7 +98,7 @@ sub wanted{
    }elsif(-d $File::Find::name) {# recurse if its a dir
       $full_filename = dir($File::Find::name);
       #say "dir $File::Find::name";
-      if( $filename =~ m/^_FAILED_.*/){
+      if( $filename =~ m/^_FAILED_.*/ || $full_filename =~ m/Belangrijke Informatie/i){
          $count++;
          say $full_filename;
          push @to_delete, $full_filename;
