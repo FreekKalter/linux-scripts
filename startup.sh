@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "[-] mounting truecrypt volumes"
-sudo truecrypt --auto-mount=favorites --keyfiles=/mnt/secret/down_secret
+sudo truecrypt --auto-mount=favorites --keyfiles=./mnt-secret/secret/down_secret
 cp -H ~/scripts/gtk-bookmarks ~/.config/gtk-3.0/bookmarks
 echo "[+] mounting done"
 
