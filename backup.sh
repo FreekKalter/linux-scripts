@@ -1,18 +1,13 @@
 #!/bin/bash
-TARSNAP=/usr/local/bin/tarsnap
+set -e
+set -o pipefail
+
+PATH=/usr/local/bin/:$PATH
+TARSNAPPER=/home/fkalter/.local/bin/tarsnapper
 HOME=/home/fkalter
-OPTIONS="--configfile $HOME/.tarsnaprc"
-TSR=$HOME/gopath/bin/tsr
-LOG=/var/log/tarsnap
+TARSNAPRC="/usr/local/etc/tarsnap.conf"
+TARSNAPPER_YML="$HOME/.tarsnapper.conf"
+LOG=/var/log/tarsnap/tarsnap.log
 
-echo "`date`------------------------------------------------------------------------------" >> $LOG/log.log
-$TARSNAP  $OPTIONS -c -f "log(`$TSR --time`)" /var/log &>> $LOG/log.log
-$TSR --configfile $HOME/.tarsnaprc --delete log &>> $LOG/log.log
-
-echo "`date`------------------------------------------------------------------------------" >> $LOG/etc.log
-$TARSNAP $OPTIONS -c -f "etc(`$TSR --time`)" /etc  &>> $LOG/etc.log
-$TSR --configfile $HOME/.tarsnaprc --delete etc &>> $LOG/etc.log
-
-echo "`date`------------------------------------------------------------------------------" >> $LOG/home.log
-$TARSNAP $OPTIONS --aggressive-networking -X $HOME/.tarsnap-home-exclude -c -f "home(`$TSR --time`)" $HOME &>> $LOG/home.log
-$TSR --configfile $HOME/.tarsnaprc --delete home &>> $LOG/home.log
+echo "`date`------------------------------------------------------------------------------" >> $LOG
+$TARSNAPPER -o configfile $TARSNAPRC -o v -o print-stats -v -c $TARSNAPPER_YML make &>> $LOG
